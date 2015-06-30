@@ -59,7 +59,7 @@ if args.label is not None:
         label_end[pattern] = 0
 
 
-(stdout, stderr) = Popen(["file", filename], stdout=PIPE).communicate()
+(stdout, stderr) = Popen(["file", "-L", filename], stdout=PIPE).communicate()
 if not (stderr == None):
     print "file invocation failed: %s"%stderr
     sys.exit(1)

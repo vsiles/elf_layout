@@ -44,6 +44,7 @@ def get_color(i):
 
 if len(sys.argv) <= 1:
     usage(sys.argv[0])
+    sys.exit(0)
 
 if sys.argv[1] == "--version":
     banner(sys.argv[0])

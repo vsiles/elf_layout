@@ -7,17 +7,17 @@ import matplotlib.pyplot as plt
 VMAJOR=1
 VMINOR=0
 
-def banner(prog):
-    print "%s version %d.%d"%(prog, VMAJOR, VMINOR)
+import argparse
 
-def usage(prog):
-    print "Usage: %s --version\tPrint current version."%(prog)
-    print "       %s --help\tPrint this message."%(prog)
-    print "       %s [--all] [--filter=X] [--label=str ...] filename.elf\tAnalyze ELF file."%(prog)
-    print "       \t--all: display all part of the ELF, not just OBJECTs."
-    print "       \t--filter=X: do not display part that exceed X% of the total."
-    print "       \t--label=str: compute the space used between labels str_start and str_end."
-    print "       \t\tCan be used several times."
+parser = argparse.ArgumentParser(prog='PROG')
+parser = argparse.ArgumentParser(description='Analyze ELF file')
+parser.add_argument('filename', metavar="ELF", help="name of the ELF file")
+parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+parser.add_argument('-a', '--all', action="store_true", help="display all part of the ELF, not just OBJECTs.")
+parser.add_argument('-f', '--filter', type=int, metavar = "X", help="do not display part that exceed X%% of the total.")
+parser.add_argument('-l', '--label', action='append', help="compute the space used between labels str_start and str_end.Can be used several times.")
+
+args = parser.parse_args()
 
 
 def get_size(s):
@@ -42,56 +42,30 @@ def get_color(i):
         return (1, 0.5, random.random())
 
 
-if len(sys.argv) <= 1:
-    usage(sys.argv[0])
-    sys.exit(0)
-
-if sys.argv[1] == "--version":
-    banner(sys.argv[0])
-    sys.exit(0)
-
-if sys.argv[1] == "--help":
-    usage(sys.argv[0])
-    sys.exit(0)
-
 random.seed(time.time())
 
-args = sys.argv[1:]
-show_all = 0
 top_filter = 1
-filename = ""
+filename = args.filename
 label_start = {}
 label_end = {}
 
-while len(args) > 0:
-    head = args.pop(0)
-    if head == "--all":
-        show_all = 1
-    elif "--filter=" in head:
-        value = get_size(head.split('=')[1])
-        if value < 0:
-            value = 0
-        elif value >= 100:
-            value = 100
-        top_filter = float(value)/100.0
-    elif "--label=" in head:
-        pattern = head.split('=')[1]
+if args.filter is not None:
+    value = int(args.filter)
+    if value < 0:
+        value = 0
+    elif value >= 100:
+        value = 100
+    top_filter = float(value)/100.0
+
+if args.label is not None:
+    for pattern in args.label:
         label_start[pattern] = 0
         label_end[pattern] = 0
-    elif len(head) >= 1 and head[0]=='-':
-        print "Unsupported option: %s"%(head)
-        sys.exit(1)
-    else:
-        filename = head
-        break
+
 
 (stdout, stderr) = Popen(["file", filename], stdout=PIPE).communicate()
 if not (stderr == None):
     print "file invocation failed: %s"%stderr
-    sys.exit(1)
-
-if not "ELF" in stdout:
-    print "Not an ELF file: %s"%stdout
     sys.exit(1)
 
 (stdout, stderr) = Popen(["readelf", "-s", filename], stdout=PIPE).communicate()
@@ -126,7 +100,7 @@ for line in lines:
         name = name[:-4]
         if name in label_end.keys():
             label_end[name] = addr
-    elif show_all == 0:
+    elif args.all == 0: 
         if typ in to_skip:
             continue
     total_size += size

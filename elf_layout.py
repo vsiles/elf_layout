@@ -132,7 +132,7 @@ for name in label_start.keys():
     total_size += n
     add_labels[name] = n
 
-print "Total size is %d"%(total_size)
+print "Total size is %d octets."%(total_size)
 # Slices are ordered and plotted counter-clockwise
 labels = []
 sizes = []
@@ -141,29 +141,42 @@ explode = []
 
 selector = 0
 
+total_showed_size = 0
 for (k,v) in symbols.iteritems():
     f = float(v) / float(total_size)
     if f <= top_filter:
+        total_showed_size += v
         labels.append(k)
         sizes.append(v)
         colors.append(get_color(selector))
-        explode.append(0.2)
+        explode.append(0)
         selector += 1
         selector %= 3
     else:
-        print "Hiding %s (size=%d) which is %d%% of the total."%(k,v,int(f*100))
+        print "Hiding %s (size=%d octets) which is %d%% of the total."%(k,v,int(f*100))
 
 for (k,v) in add_labels.iteritems():
     f = float(v) / float(total_size)
     if f <= top_filter:
+        total_showed_size += v
         labels.append(k)
         sizes.append(v)
+        explode.append(0)
         colors.append(get_color(selector))
-        explode.append(0.5)
         selector += 1
         selector %= 3
     else:
-        print "Hiding %s (size=%d) which is %d%% of the total."%(k, v, int(f*100))
+        print "Hiding %s (size=%d octets) which is %d%% of the total."%(k, v, int(f*100))
+
+print "Total displayed size is %d octets."%(total_showed_size)
+
+
+for i in xrange(len(explode)):
+    f = float(sizes[i]) / float(total_showed_size)
+    if f < 0.01:
+        explode[i] = 1 - f
+    else:
+        explode[i] = 0.2
 
 plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%')
 plt.axis('equal')

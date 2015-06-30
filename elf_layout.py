@@ -64,6 +64,11 @@ if not (stderr == None):
     print "file invocation failed: %s"%stderr
     sys.exit(1)
 
+tokens = stdout.split()[1:]
+if not "ELF" in tokens[0]:
+    print "Not an ELF file: %s"%stdout
+    sys.exit(1)
+
 (stdout, stderr) = Popen(["readelf", "-s", filename], stdout=PIPE).communicate()
 if not (stderr == None):
     print "readelf invocation failed: %s"%stderr

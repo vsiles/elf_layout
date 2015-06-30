@@ -14,10 +14,8 @@ elf_layout.py --version
 elf_layout.py --help
     Print how to use the program.
 
-elf_layout.py [--all] [--filter=X] [--label=str ...] filename.elf
+elf_layout.py [--all] [--filter=X] [--label=str ...] path/to/filename.elf
     Analyze ELF file's OBJECT blops.
-
-    filename.elf *has* to be the last argument.
 
     If [--all] modifier is present, does not restrict the analysis to OBJECT
     entries but to any entry.

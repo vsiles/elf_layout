@@ -70,14 +70,21 @@ if not (stderr == None):
     sys.exit(1)
 
 symbols = {}
-lines = stdout.split('\n')[3:]
+lines = stdout.split('\n')
 total_size = 0
 to_skip = ["SECTION", "NOTYPE", "FILE", "FUNC" ]
-# skip the first 3 lines we don't care
 for line in lines:
     tokens = line.split()
+    # skip empty lines
     if len(tokens) == 0:
         continue
+
+    # must start with a index, skip 
+    # other "informative" lines
+    if not tokens[0][0] in "0123456789":
+        print "Skipping verbose line: %s"%line
+        continue
+
     addr = int(tokens[1], 16)
 
     if len(tokens) >= 8:

@@ -3,10 +3,6 @@
 import sys, os, time, random
 from subprocess import Popen, PIPE
 import matplotlib.pyplot as plt
-
-VMAJOR=1
-VMINOR=0
-
 import argparse
 
 parser = argparse.ArgumentParser(prog='PROG')
@@ -82,7 +78,7 @@ for line in lines:
     tokens = line.split()
     if len(tokens) == 0:
         continue
-    addr = get_size("0x"+tokens[1])
+    addr = int(tokens[1], 16)
 
     if len(tokens) >= 8:
         name = tokens[7]

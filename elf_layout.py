@@ -85,6 +85,15 @@ while len(args) > 0:
         filename = head
         break
 
+(stdout, stderr) = Popen(["file", filename], stdout=PIPE).communicate()
+if not (stderr == None):
+    print "file invocation failed: %s"%stderr
+    sys.exit(1)
+
+if not "ELF" in stdout:
+    print "Not an ELF file: %s"%stdout
+    sys.exit(1)
+
 (stdout, stderr) = Popen(["readelf", "-s", filename], stdout=PIPE).communicate()
 if not (stderr == None):
     print "readelf invocation failed: %s"%stderr

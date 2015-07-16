@@ -11,7 +11,7 @@ parser.add_argument('filename', metavar="ELF", help="name of the ELF file")
 parser.add_argument('--version', action='version', version='%(prog)s 1.0')
 parser.add_argument('-a', '--all', action="store_true", help="display all part of the ELF, not just OBJECTs.")
 parser.add_argument('-f', '--filter', type=int, metavar = "X", help="do not display part that exceed X%% of the total.")
-parser.add_argument('-l', '--label', action='append', help="compute the space used between labels str_start and str_end.Can be used several times.")
+parser.add_argument('-l', '--label', metavar = "LABEL", action='append', help="compute the space used between labels LABEL_start and LABEL_end.Can be used several times.")
 
 args = parser.parse_args()
 

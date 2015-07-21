@@ -12,6 +12,7 @@ parser.add_argument('--version', action='version', version='%(prog)s 1.0')
 parser.add_argument('-a', '--all', action="store_true", help="display all part of the ELF, not just OBJECTs.")
 parser.add_argument('-f', '--filter', type=int, metavar = "X", help="do not display part that exceed X%% of the total.")
 parser.add_argument('-l', '--label', metavar = "LABEL", action='append', help="compute the space used between labels LABEL_start and LABEL_end.Can be used several times.")
+parser.add_argument('-t', '--text', action="store_true", help="output the size (in octets) of each displayed parts.")
 
 args = parser.parse_args()
 
@@ -134,6 +135,8 @@ selector = 0
 
 total_showed_size = 0
 for (k,v) in symbols.iteritems():
+    if args.text:
+        print "\t%s: %d."%(k,v)
     f = float(v) / float(total_size)
     if f <= top_filter:
         total_showed_size += v
@@ -147,6 +150,8 @@ for (k,v) in symbols.iteritems():
         print "Hiding %s (size=%d octets) which is %d%% of the total."%(k,v,int(f*100))
 
 for (k,v) in add_labels.iteritems():
+    if args.text:
+        print "\t%s: %d."%(k,v)
     f = float(v) / float(total_size)
     if f <= top_filter:
         total_showed_size += v
